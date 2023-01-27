@@ -49,6 +49,6 @@ class Acquisition():
         FILENAME = 'number_samples:' + \
         str(self.sdr.num_samples)+"-center_freq:"+str(self.sdr.center_freq)+'_Mhz.iq'
 
-        SAVE = os.path.join(PATH, FILENAME)
+        self.FILEPATH = os.path.join(PATH, FILENAME)
 
-        self.samples.tofile(SAVE)
+        self.samples.tofile(self.FILEPATH)
