@@ -6,6 +6,7 @@ from datetime import datetime
 
 from Acquisition import Acquisition
 from utils.db import DatabaseScripts
+from utils.semaphore import Semaphore
 
 
 def get_data(acquisition):
@@ -26,9 +27,16 @@ def get_data_same_config(acquisition):
 
 
 if __name__ == '__main__':
+
+    semaphore = Semaphore()
     acquisition = Acquisition()
 
-    execution_time = get_data(acquisition)
+    semaphore_status = semaphore.read_config()
+    if semaphore_status == 1:
+        execution_time = get_data(acquisition)
+        semaphore.set_false()
+    elif semaphore_status == 0:
+        get_data_same_config(acquisition)
 
     if execution_time > datetime.now() + datetime.timedelta(minutes=5):
         execution_time = get_data(acquisition)
@@ -37,5 +45,3 @@ if __name__ == '__main__':
 
     db_manager = DatabaseScripts()
     db_manager.save_file_to_server(acquisition.FILEPATH)
-
-    check_semaforo
